@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is the first Polymarket experiment leveraging data from the [**WeatherXM Data Index**](https://index.weatherxm.com/). The experiment involves calculating the average temperature for a major city (in this case, London) over a 30-day period. This data will then be used to propose a Polymarket bet, where users can predict whether the actual average temperature falls within a certain range. This experiment serves as a prototype, with potential for more weather-based bets if successful.
+This is the weather bet leveraging data from the [**WeatherXM Data Index**](https://index.weatherxm.com/). The experiment involves calculating the average temperature for a major city (in this case, London) over a 30-day period. This data will then be used to propose a weather bet, where users can predict whether the actual average temperature falls within a certain range. This experiment serves as a prototype, with potential for more weather-based bets if successful.
 
 The experiment utilizes **Web3 Storage** and **Enriched Weather Data** to perform these calculations, with strict verification protocols based on public keys, Proof-of-Location (PoL), and Quality-of-Data (QoD) scores.
 
@@ -25,8 +25,8 @@ The experiment utilizes **Web3 Storage** and **Enriched Weather Data** to perfor
    - Optionally research using **Bacalhau** to automate the temperature computation for a period of 30 days.
 
 ### 4. **Result Integration and Bet Resolution**
-   - Integrate the calculated average temperature with the **UMA Oracle**, which will act as the final arbiter for the Polymarket bet.
-   - Publish the calculated result to resolve the Polymarket bet.
+   - Integrate the calculated average temperature with the **UMA Oracle**, which will act as the final arbiter for the weather bet.
+   - Publish the calculated result to resolve the bet.
 
 ---
 
@@ -52,7 +52,7 @@ This project can be divided into the following steps:
 
 4. **Verification and Result Publication**
    - Ensure that all data can be verified using the device’s public key and is signed with the corresponding private key.
-   - Integrate with the Polymarket bet resolution, using the UMA Oracle to publish the final result.
+   - Integrate with a betting platform, using a decentralized and verifiable solution such as the UMA Oracle to publish the final result.
 
 ---
 ## Key Terms
@@ -94,9 +94,9 @@ The boundary coords for the London area using an official [GeoJson](https://serv
 
 ## Conclusion
 
-This experiment aims to bring reliable and secure weather data into a novel betting scenario on Polymarket. By ensuring that the data is accurate, verifiable, and enriched with meaningful metrics like PoL and QoD, we can build confidence in the results and potentially scale the experiment for additional cities or datasets in the future.
+This experiment aims to bring reliable and secure weather data into a novel betting scenario. By ensuring that the data is accurate, verifiable, and enriched with meaningful metrics like PoL and QoD, we can build confidence in the results and potentially scale the experiment for additional cities or datasets in the future.
 
-The final result of the temperature calculation will be used to resolve the Polymarket bet via the **UMA Oracle**, providing a fully transparent process from data acquisition to bet resolution.
+The final result of the temperature calculation will be used to resolve the bet via a decentralized solution such as the **UMA Oracle**, providing a fully transparent process from data acquisition to bet resolution.
 
 ---
 
@@ -104,10 +104,14 @@ The final result of the temperature calculation will be used to resolve the Poly
 
 1. Clone the repository.
 2. Ensure all dependencies are installed:
-`pip install -r requirements.txt`
+```
+python3 -m venv venv
+source venv/bin/activate 
+pip install -r requirements.txt
+```
 3. Run the script to calculate the average temperature using verifiable weather station data:
 `python3 main.py`
-4. The output will display the average temperature for the last 30 days, which can then be used to resolve the Polymarket bet.
+4. The output will display the average temperature for the last 30 days, which can then be used to resolve the bet.
 
 For more details on the implementation, please refer to the individual sections within the repository.
 

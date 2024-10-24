@@ -1,5 +1,5 @@
-# Polymarket Bet Resolvers
-This repository contains scripts and computations designed to resolve bets on the Polymarket platform. It includes data processing and analysis tools to verify market outcomes based on real-world events.
+# Weather Bet Resolvers
+This repository contains scripts and computations designed to resolve bets on the several platforms. It includes data processing and analysis tools to verify market outcomes based on real-world events.
 
 ## Features
 - Data ingestion from various sources (e.g., weather).
