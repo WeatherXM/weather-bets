@@ -74,7 +74,7 @@ H3 is a geospatial indexing system that subdivides the Earth's surface into hexa
 
 The weather stations' geolocation is mapped into their corresponding H3 hexagons. Any weather station whose coordinates fall within a hexagon covering the London area (defined by its administrative boundaries) is included in the dataset.
 
-<img src="./img/london-h3-cells.png" alt="H3 London Map" width="500" height="500">
+<img src="./geojson/london-h3-plot.png" alt="H3 London Map" width="500" height="500">
 
 
 ### Data Source for London Boundaries
