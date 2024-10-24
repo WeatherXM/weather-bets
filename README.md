@@ -2,9 +2,9 @@
 This repository contains scripts and computations designed to resolve bets on the Polymarket platform. It includes data processing and analysis tools to verify market outcomes based on real-world events.
 
 ## Features
-- Data ingestion from various sources (e.g., weather, sports).
+- Data ingestion from various sources (e.g., weather).
 - H3 grid calculations for geospatial data.
-- Processing and filtering of large datasets from IPFS using Tableland.
+- Processing and filtering of large datasets from IPFS.
 - Functions to compute and validate metrics for bets.
 
 ## Installation
