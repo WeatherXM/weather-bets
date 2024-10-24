@@ -13,7 +13,7 @@ def get_outer_boundary(url):
     london_bd = gdf.dissolve()
     boundary_coords = list(london_bd.geometry.iloc[0].exterior.coords)
     with open('geojson/boundary_coords.txt', 'w') as file:
-        file.write(f"{Polygon}({boundary_coords})")
+        file.write(f"Polygon({boundary_coords})")
     return Polygon(boundary_coords)
 
 def initialize_london_boundary():
