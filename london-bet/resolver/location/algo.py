@@ -1,24 +1,27 @@
 import h3
 import geopandas as gpd
-from shapely.geometry import Polygon
+from shapely.geometry import Polygon,shape
 import matplotlib.pyplot as plt
 import contextily as ctx
-import requests
+import os
+from dotenv import load_dotenv
+import json
+load_dotenv()
 
-with open('geojson/boundary_coords.txt', 'r') as file:
-    london_boundary = file.read()
+GEOJSON_URL = os.getenv('GEOJSON_URL')  
 
 def get_outer_boundary(url):
+    print(url)
     gdf = gpd.read_file(url)
     london_bd = gdf.dissolve()
     boundary_coords = list(london_bd.geometry.iloc[0].exterior.coords)
-    with open('geojson/boundary_coords.txt', 'w') as file:
-        file.write(f"Polygon({boundary_coords})")
-    return Polygon(boundary_coords)
+    polygon = Polygon(boundary_coords)
+    with open('geojson/boundary_coords.json', 'w') as file:
+        json.dump(polygon.__geo_interface__, file)
+    return polygon
 
 def initialize_london_boundary():
-    url = "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/LAC_Dec_2018_Boundaries_EN_BFE_2022/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson"
-    polygon = get_outer_boundary(url)
+    polygon = get_outer_boundary(GEOJSON_URL)
     return polygon
 
 def get_cells_from_polygon(polygon, resolution):
@@ -45,9 +48,17 @@ def visualize_h3_cells_on_map(h3_cells, london_boundary):
 resolution = 7
 
 def plt_london():
-    london_h3_cells = get_cells_from_polygon(london_boundary, resolution)
-    visualize_h3_cells_on_map(london_h3_cells, london_boundary)
+    with open('geojson/boundary_coords.json', 'r') as file:
+        geojson_data = json.load(file)
+    boundary = shape(geojson_data)
+    london_h3_cells = get_cells_from_polygon(boundary, resolution)
+    visualize_h3_cells_on_map(london_h3_cells, boundary)
 
 def geo_filter(df):
-    london_h3_cells = get_cells_from_polygon(london_boundary, resolution)
+    #london_boundary = get_outer_boundary(GEOJSON_URL)
+    with open('geojson/boundary_coords.json', 'r') as file:
+        geojson_data = json.load(file)
+    # Convert GeoJSON to a Polygon object
+    boundary = shape(geojson_data)
+    london_h3_cells = get_cells_from_polygon(boundary, resolution)
     return df.loc[df['cell_id'].isin(london_h3_cells)]
