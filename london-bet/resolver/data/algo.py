@@ -5,10 +5,15 @@ from operator import itemgetter
 
 
 def m5(pub_key, packet_b64, packet_sig):
-    x = int(pub_key[0:64], 16)
-    y = int(pub_key[64:128], 16)
-    curve = asymmetric.ec.SECP256R1()
-    verifying_key = asymmetric.ec.EllipticCurvePublicNumbers(x, y, curve).public_key()
+    # x = int(pub_key[0:64], 16)
+    # y = int(pub_key[64:128], 16)
+
+    # curve = asymmetric.ec.SECP256R1()
+    # verifying_key = asymmetric.ec.EllipticCurvePublicNumbers(x, y, curve).public_key()
+
+    # Decode the base64 string
+    der_bytes = base64.b64decode(pub_key)
+    verifying_key = serialization.load_der_public_key(der_bytes)
     sig_bytes = base64.urlsafe_b64decode(packet_sig)
     sig_der = asymmetric.utils.encode_dss_signature(
         int.from_bytes(sig_bytes[0:32], "big"),
@@ -68,7 +73,6 @@ def d1(pub_key, packet_b64, packet_sig):
 
 type_to_fn = {
     "WS1000": m5,
-    "WS1001": m5,
     "WS2001": helium,
     "WS2000": helium,
     "WG1200": d1
@@ -93,4 +97,6 @@ def verify(df):
         except Exception as e:
             verified_mask.append(False)
     print('VERIFIED HARDWARE BUNDLES {}'.format(len(devices)))
-    return df.loc[verified_mask].copy()
+    filtered_df = df.loc[verified_mask].copy()
+    print('VERIFIED DEVICES {}'.format(filtered_df['name'].unique()))
+    return filtered_df
