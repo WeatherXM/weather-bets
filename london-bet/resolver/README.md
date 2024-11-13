@@ -42,13 +42,13 @@ This project can be divided into the following steps:
    - These fields ensure that the data comes from valid, secure devices and is tamper-proof.
 
 2. **Data Publication**
-   - Publish the enriched weather data, including the calculated QoD, PoL, and RM scores to **Tableland**. This publication will form the basis of the experiment and future verifications.
+   - Publish the enriched weather data, including the calculated QoD, PoL and RM scores to **Tableland**. This publication will form the basis of the experiment and future verifications.
 
 3. **Average Temperature Calculation**
    - Write a script to calculate the average temperature for the last 30 days using the enriched weather data. This calculation should only include data from devices that pass the filter based on:
      - **Geolocation** (London region).
      - **QoD > 0.8** and **PoL = 1**.
-     - **Verification of data authenticity** using the public keys and signatures from the weather devices.
+     - **Verification of data authenticity** using the public keys, signatures and base64 encoded data packets from the weather devices.
 
 4. **Verification and Result Publication**
    - Ensure that all data can be verified using the device’s public key and is signed with the corresponding private key.
@@ -65,7 +65,7 @@ QoD is an algorithm that assesses the quality of weather data provided by a weat
 
 ---
 
-## Data Source and Geo Filtering
+## Data Sources, Geo Filtering and Data Verification
 
 For this experiment, weather devices will be filtered based on their geolocation in the **London area**. The geolocation filtering is performed using **H3 hexagons at resolution 7**, which divide the Earth into hexagonal cells that allow for efficient spatial indexing. 
 
@@ -83,13 +83,22 @@ You can explore and download the relevant GeoJSON files from the UK Open Geograp
 
 By combining H3 hexagons and official administrative boundaries, the geo-filtering process ensures that only relevant weather station data from the London area is used in this experiment.
 
-### Implementation
+#### Generate the Boundary Coordinates for the London Area Polygon
 
 The boundary coords for the London area using an official [GeoJson](https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/LAC_Dec_2018_Boundaries_EN_BFE_2022/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson) can be dynamically by invoking the following command and the results will be stored in *geojson* folder:
 
 `python3 location/london_bd_creation.py`
 
 ---
+
+### Data Source for Weather Data
+
+Tableland provided by `Textile` is used as a datasource for this expirement. On top of **Tableland**, the WeatherXM team has build the [**WeatherXM Data Index**](https://index.weatherxm.com/), which holds the necessary **Parquet** files to execute the bet.
+
+### Data Verification
+
+The weather stations sign the packets that are generated daily. However, due to some limitations with some models, every X packets a signed packet is send. This means that they hashe the raw packet data and create a signature using their private key provided by the secure element located on top of them. The other side can then check that this packet was sent from this specific device by verifying it’s packet using the raw packet data, it’s public key and the generated signature. For the purpose of this weather bet, only the verified data are taken into consideration to resolve the bet.
+
 
 ## Conclusion
 
@@ -108,18 +117,35 @@ python3 -m venv venv
 source venv/bin/activate 
 pip install -r requirements.txt
 ```
-3. Run the script to calculate the average temperature using verifiable weather station data:
-`python3 main.py`
-4. The output will display the average temperature for the last 30 days, which can then be used to resolve the bet.
+3. There are 2 ways to run the program that resolves the bet:
+   - With chunks enabled using low memory:
+   `python3 main.py -f assets/data_11_11.parquet -lm true`
+   - Without chunks requiring over 16G RAM and 30G Swap:
+   `python3 main.py -f assets/data_11_11.parquet`
 
-For more details on the implementation, please refer to the individual sections within the repository.
+4. The output will display the daily average temperature, which can then be used to resolve the bet.
+```
+LOADING WITHOUT CHUNKS
+GEO VERIFIED DEVICES COUNT: 34
+GEO LOCATION VERIFICATION IS COMPLETED
+WEATHER VERIFIED DEVICES COUNT WITH QOD>=0.8 AND POL==1: 13
+WEATHER DATA FILTERING IS COMPLETED
+VERIFIED DEVICES ['Tricky Brunette Tornado' 'Magic Opaque Fog' 'Dizzy Champagne Sun'
+ 'Brave Veronica Drought' 'Sweet Raspberry Earth'
+ 'Delightful Taupe Troposphere' 'Eager Bole Haze' 'Great Peach Cloud'
+ 'Delightful Nylon Air']
+DATA VERIFICATION IS COMPLETED
+DATA VERIFIED DEVICES COUNT: 9
+LONDON DEVICES FROM DATAFRAME PARTICIPATING IN BET RESOLUTION AFTER FILTERING: 26%
+AVG TEMP: 9.49 Celsius
+```
 
 ---
 
 ## Next Steps
 
 To build on the success of this experiment, future efforts may include the following:
-
+- **30 Days Resolver**: Run the above script for over 30 days, and then find the average temperature for the last 30 days.
 - **Decentralized Data Pipelines**: Implement a system that continuously ingests and processes weather data using decentralized, distributed pipelines. This approach will ensure data integrity and eliminate central points of failure.
 
 - **Trustless Computation**: Leverage a decentralized computation framework to perform temperature calculations across multiple nodes. This guarantees that the results are produced transparently and can be verified by any party.
