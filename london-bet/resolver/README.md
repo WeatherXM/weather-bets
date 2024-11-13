@@ -119,9 +119,9 @@ pip install -r requirements.txt
 ```
 3. There are 2 ways to run the program that resolves the bet:
    - With chunks enabled using low memory:
-   `python3 main.py -f assets/data_11_11.parquet -lm true`
+   `python3 main.py -f data.parquet -lm true`
    - Without chunks requiring over 16G RAM and 30G Swap:
-   `python3 main.py -f assets/data_11_11.parquet`
+   `python3 main.py -f data.parquet`
 
 4. The output will display the daily average temperature, which can then be used to resolve the bet.
 ```
