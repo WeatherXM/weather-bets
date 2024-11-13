@@ -69,10 +69,13 @@ def verify(df):
     verified_mask = []
     devices = []
     for index, record in df.iterrows():
-        name, pub_key, packet_b64, packet_sig, model = df.loc[index, ['name', 'public_key', 'ws_packet_b64', 'ws_packet_sig', 'model']]
+        name, pub_key, packet_b64, packet_sig, model = df.loc[index, ['name', 'public_key_PEM', 'ws_packet_b64', 'ws_packet_sig', 'model']]
         fn = type_to_fn.get(model)
         if name not in devices:
             devices.append(name)
+        if model == 'WS1001':
+            verified_mask.append(False)
+            continue
         if fn is None:
             print(f"{name}: verification failed - not supported hardware bundle '{record}'")
             verified_mask.append(False)
@@ -83,7 +86,6 @@ def verify(df):
             verified_mask.append(verified)
         except Exception as e:
             verified_mask.append(False)
-    print('VERIFIED HARDWARE BUNDLES {}'.format(len(devices)))
     filtered_df = df.loc[verified_mask].copy()
     print('VERIFIED DEVICES {}'.format(filtered_df['name'].unique()))
     return filtered_df
