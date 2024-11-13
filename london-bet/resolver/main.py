@@ -11,6 +11,6 @@ parser.add_argument('--longitude', '-lon', required=False, type=float, help='the
 args = parser.parse_args()
 path, lowmem, lat, lon = args.file, args.lowmem, args.latitude, args.longitude
 decision = decide(path, lowmem)
-print('AVG TEMP: {}'.format(decision))
+print('AVG TEMP: {} Celsius'.format(decision))
 
 
