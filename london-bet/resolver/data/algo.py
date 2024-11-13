@@ -5,15 +5,7 @@ from operator import itemgetter
 
 
 def m5(pub_key, packet_b64, packet_sig):
-    # x = int(pub_key[0:64], 16)
-    # y = int(pub_key[64:128], 16)
-
-    # curve = asymmetric.ec.SECP256R1()
-    # verifying_key = asymmetric.ec.EllipticCurvePublicNumbers(x, y, curve).public_key()
-
-    # Decode the base64 string
-    der_bytes = base64.b64decode(pub_key)
-    verifying_key = serialization.load_der_public_key(der_bytes)
+    verifying_key = serialization.load_pem_public_key(bytes(pub_key, "utf-8"))
     sig_bytes = base64.urlsafe_b64decode(packet_sig)
     sig_der = asymmetric.utils.encode_dss_signature(
         int.from_bytes(sig_bytes[0:32], "big"),
@@ -31,10 +23,7 @@ def m5(pub_key, packet_b64, packet_sig):
 
 
 def helium(pub_key, packet_b64, packet_sig):
-    x = int(pub_key[0:64], 16)
-    y = int(pub_key[64:128], 16)
-    curve = asymmetric.ec.SECP256R1()
-    verifying_key = asymmetric.ec.EllipticCurvePublicNumbers(x, y, curve).public_key()
+    verifying_key = serialization.load_pem_public_key(bytes(pub_key, "utf-8"))
     sig_bytes = base64.urlsafe_b64decode(packet_sig)
     sig_der = asymmetric.utils.encode_dss_signature(
         int.from_bytes(sig_bytes[0:32], "big"),
@@ -52,9 +41,7 @@ def helium(pub_key, packet_b64, packet_sig):
 
 
 def d1(pub_key, packet_b64, packet_sig):
-    n = int(pub_key[0:512], 16)
-    e = int(pub_key[512:], 16)
-    verifying_key = asymmetric.rsa.RSAPublicNumbers(e, n).public_key()
+    verifying_key = serialization.load_pem_public_key(bytes(pub_key, "utf-8"))
     sig_bytes = base64.urlsafe_b64decode(packet_sig)
     chosen_hash = hashes.SHA256()
     hasher = hashes.Hash(chosen_hash)
