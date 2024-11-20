@@ -19,11 +19,11 @@ def load_df(path, low_mem):
                         'ws_packet_sig', 'lat', 'lon', 'qod_score', 'pol_score', 'temperature']]
             chunk = chunk.astype({
                 'name': 'category',
-                'model': 'category',
-                'cell_id': 'category',
-                'public_key_PEM': 'category',
-                'ws_packet_b64': 'category',
-                'ws_packet_sig': 'category',
+                'model': 'string',
+                'cell_id': 'string',
+                'public_key_PEM': 'string',
+                'ws_packet_b64': 'string',
+                'ws_packet_sig': 'string',
                 'lat': 'float32',
                 'lon': 'float32',
                 'qod_score': 'float32',
@@ -55,7 +55,7 @@ def filter(chunk):
     print('GEO VERIFIED DEVICES COUNT: {}'.format(len(geo_filtered['name'].unique())))
     print('GEO LOCATION VERIFICATION IS COMPLETED')
     weather_verified = weather.has_verified_metrics(geo_filtered)
-    print('WEATHER VERIFIED DEVICES COUNT WITH QOD>=0.8 AND POL==1: {}'.format(len(weather_verified['name'].unique())))
+    print('WEATHER VERIFIED DEVICES COUNT WITH QOD>=0.8 AND POL>0: {}'.format(len(weather_verified['name'].unique())))
     print('WEATHER DATA FILTERING IS COMPLETED')     
     data_verified = data.verify(weather_verified)
     print('DATA VERIFICATION IS COMPLETED')
@@ -66,8 +66,10 @@ def filter(chunk):
 
 def decide(path, low_mem):
     df = load_df(path, low_mem)
-    device_mean = df.groupby('name', as_index=False, observed=False)['temperature'].mean()
-    london_temp_mean = device_mean.rename(columns={'temperature': 'mean'})['mean'].mean()
-    return round(london_temp_mean,2)
+    if df.size>0:
+        device_mean = df.groupby('name', as_index=False, observed=False)['temperature'].mean()
+        london_temp_mean = device_mean.rename(columns={'temperature': 'mean'})['mean'].mean()
+        return round(london_temp_mean,2)
+    return 'NO DEVICES MEET THE CRITERIA TO CALCULATE AVG TEMPERATURE'
 
 
