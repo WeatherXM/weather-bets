@@ -1,5 +1,19 @@
 # London Bet Resolver: Monthly Average Temperature Calculation
 
+##### Table of Contents  
+- [Overview](#overview)
+- [Functional Requirements](#functional-requirements)  
+- [Experiment Scope](#experiment-scope)
+- [Key Terms](#key-terms)
+- [In-Depth Analysis](#in-depth-analysis)
+   - [Data Sources](#data-source-for-london-boundaries)
+   - [Data Verification](#data-verification)
+- [Usage](#usage)
+- [Example](#example)
+- [Next Steps](#next-steps)
+- [License](#license)
+- [Technologies](#technologies)
+
 ## Overview
 
 This is the weather bet leveraging data from the [**WeatherXM Data Index**](https://index.weatherxm.com/). The experiment involves calculating the average temperature for a major city (in this case, London) over a 30-day period. This data will then be used to propose a weather bet, where users can predict whether the actual average temperature falls within a certain range. This experiment serves as a prototype, with potential for more weather-based bets if successful.
@@ -16,16 +30,15 @@ The experiment utilizes **Web3 Storage** and **Enriched Weather Data** to perfor
 ### 2. **Device Filtering**
    - **Active Device List Creation**: Calculate the active devices that should be considered based on:
      - **Quality-of-Data (QoD) >= 0.8**.
-     - **Proof-of-Location (PoL) = 1**.
+     - **Proof-of-Location (PoL) > 0**.
    - The filtered list ensures only the most accurate and trustworthy weather data is used.
 
 ### 3. **Computation and Publication**
-   - Develop a script or algorithm that computes the **average temperature** for the London area over the last 30 days.
-   - Store this script in a GitHub repository, ensuring it can fetch, filter, and compute data based on predefined criteria.
-   - Optionally research using **Bacalhau** to automate the temperature computation for a period of 30 days.
+   - Develop the algorithm that computes the **average temperature** for the London area over the last 30 days.
+   - Fetch, filter, and compute data based on a set of predefined criteria.
 
 ### 4. **Result Integration and Bet Resolution**
-   - Integrate the calculated average temperature with the **UMA Oracle**, which will act as the final arbiter for the weather bet.
+   - Integrate the calculated average temperature with an Oracle service compatible with the Betting Platform which will act as the final arbiter for the weather bet.
    - Publish the calculated result to resolve the bet.
 
 ---
@@ -37,22 +50,21 @@ This project can be divided into the following steps:
 1. **Dataset Creation**
    - Generate a dataset containing the necessary fields to verify weather station data based on public keys. 
    - The fields include: 
-     - `public_key`: to verify the authenticity of the device's data.
+     - `public_key_PEM`: to verify the authenticity of the device's data.
      - `ws_packet_b64` and `ws_packet_sig`: signed data packets from the weather stations.
    - These fields ensure that the data comes from valid, secure devices and is tamper-proof.
 
-2. **Data Publication**
-   - Publish the enriched weather data, including the calculated QoD, PoL, and RM scores to **Tableland**. This publication will form the basis of the experiment and future verifications.
+2. **Dataloading**
+   - Publish the enriched weather data, including the calculated Quality-of-Data, Proof-of-Location and Reward scores to **Tableland**. This publication will form the basis of the experiment and future verifications.
 
-3. **Average Temperature Calculation**
-   - Write a script to calculate the average temperature for the last 30 days using the enriched weather data. This calculation should only include data from devices that pass the filter based on:
+3. **Filtering**
+   - Write a script to calculate the average temperature for the last 30 days using the enriched weather data. This calculation should exclusively include data from devices that meet the required criteria:
      - **Geolocation** (London region).
-     - **QoD > 0.8** and **PoL = 1**.
-     - **Verification of data authenticity** using the public keys and signatures from the weather devices.
+     - **QoD > 0.8** and **PoL > 0**.
+     - **Verification of data authenticity** using the public keys, signatures and base64 encoded data packets from the weather devices.
 
-4. **Verification and Result Publication**
+4. **Verification**
    - Ensure that all data can be verified using the device’s public key and is signed with the corresponding private key.
-   - Integrate with a betting platform, using a decentralized and verifiable solution such as the UMA Oracle to publish the final result.
 
 ---
 ## Key Terms
@@ -63,16 +75,16 @@ PoL is an algorithm that evaluates the location data of a weather station. It en
 ### Quality-of-Data (QoD)
 QoD is an algorithm that assesses the quality of weather data provided by a weather station. It evaluates various metrics such as accuracy and consistency, generating a score that reflects confidence in the data. Weather stations must maintain a high QoD score to be considered reliable for inclusion in this experiment.
 
----
-
-## Data Source and Geo Filtering
-
-For this experiment, weather devices will be filtered based on their geolocation in the **London area**. The geolocation filtering is performed using **H3 hexagons at resolution 7**, which divide the Earth into hexagonal cells that allow for efficient spatial indexing. 
-
 ### H3 Hexagons
 H3 is a geospatial indexing system that subdivides the Earth's surface into hexagonal cells, offering several advantages for geographic analysis, including uniformity and flexibility in terms of precision. For this experiment, **resolution 7** is used, which corresponds to hexagons with an approximate edge length of **1.22 km**. This level of granularity is well-suited for filtering weather stations within city boundaries like London.
 
 The weather stations' geolocation is mapped into their corresponding H3 hexagons. Any weather station whose coordinates fall within a hexagon covering the London area (defined by its administrative boundaries) is included in the dataset.
+
+---
+
+## In-Depth Analysis
+
+For this experiment, weather devices will be filtered based on their geolocation in the **London area**. The geolocation filtering is performed using **H3 hexagons at resolution 7**, which divide the Earth into hexagonal cells that allow for efficient spatial indexing. 
 
 <img src="https://github.com/WeatherXM/weather-bets/blob/main/london-bet/resolver/geojson/london_h3_plot.png?raw=true" alt="H3 London Map" width="500" height="500">
 
@@ -83,7 +95,7 @@ You can explore and download the relevant GeoJSON files from the UK Open Geograp
 
 By combining H3 hexagons and official administrative boundaries, the geo-filtering process ensures that only relevant weather station data from the London area is used in this experiment.
 
-### Implementation
+#### Generate the Boundary Coordinates for the London Area Polygon
 
 The boundary coords for the London area using an official [GeoJson](https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/LAC_Dec_2018_Boundaries_EN_BFE_2022/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson) can be dynamically by invoking the following command and the results will be stored in *geojson* folder:
 
@@ -91,15 +103,33 @@ The boundary coords for the London area using an official [GeoJson](https://serv
 
 ---
 
-## Conclusion
+### Data Source for Weather Data
 
-This experiment aims to bring reliable and secure weather data into a novel betting scenario. By ensuring that the data is accurate, verifiable, and enriched with meaningful metrics like PoL and QoD, we can build confidence in the results and potentially scale the experiment for additional cities or datasets in the future.
+Tableland provided by `Textile` is used as a datasource for this expirement. On top of **Tableland**, the WeatherXM team has build the [**WeatherXM Data Index**](https://index.weatherxm.com/), which holds the necessary **Parquet** files to execute the bet.
 
-The final result of the temperature calculation will be used to resolve the bet via a decentralized solution such as the **UMA Oracle**, providing a fully transparent process from data acquisition to bet resolution.
+### Data Verification
+
+Weather stations employ a secure mechanism to ensure the authenticity and integrity of the data they transmit. Each station is equipped with a secure element, a specialized hardware component responsible for cryptographic operations. This secure element plays a critical role in generating digital signatures that make the transmitted data tamperproof and verifiable.
+
+Here’s how the process works:
+
+#### Packet Signing: 
+Weather stations generate data packets on a daily basis. To conserve resources, certain models are configured to send signed packets periodically, for example, every X packets. The secure element creates a digital signature using its private key. This private key is securely stored within the secure element, making it inaccessible to anyone including WeatherXM's team.
+
+#### Verification Process: 
+On the receiving side, the authenticity of a packet is verified using the raw data, the corresponding public key of the device, and the generated signature. The public key is associated with the specific device and is used to confirm that the packet was genuinely signed by the station’s private key.
+
+#### Tamperproof Data: 
+Because the signature is uniquely tied to both the raw data and the private key, any attempt to alter the packet's content would render the signature invalid. This guarantees that the data received by the other side has not been tampered with and originates from the intended device.
+
+#### Data Inclusion for Weather Bets: 
+For applications such as weather bets, only verified data—packets that successfully pass the signature validation process—are considered. This ensures fairness and accuracy by excluding potentially corrupted or unauthenticated information.
+
+The use of secure elements and cryptographic signing ensures that the data transmitted by weather stations is both reliable and tamperproof, reinforcing trust in systems that rely on this information.
 
 ---
 
-## How to Run
+## Usage
 
 1. Clone the repository.
 2. Ensure all dependencies are installed:
@@ -108,18 +138,40 @@ python3 -m venv venv
 source venv/bin/activate 
 pip install -r requirements.txt
 ```
-3. Run the script to calculate the average temperature using verifiable weather station data:
-`python3 main.py`
-4. The output will display the average temperature for the last 30 days, which can then be used to resolve the bet.
+3. There are 2 ways to run the program that resolves the bet:
+   - With chunks enabled using low memory:
+   `python3 main.py -f data.parquet -lm true`
+   - Without chunks requiring over 16G RAM and 30G Swap:
+   `python3 main.py -f data.parquet`
 
-For more details on the implementation, please refer to the individual sections within the repository.
+## Example
+
+After executing the runner, the necessary files will be retrieved from **Tableland**, proper geo location and weather filtering will take place and then the data verifiaction will be evaluated before calculting the average temperature. The following is the output when executing the runner without chunks:
+
+```
+LOADING WITHOUT CHUNKS
+GEO VERIFIED DEVICES COUNT: 34
+GEO LOCATION VERIFICATION IS COMPLETED
+WEATHER VERIFIED DEVICES COUNT WITH QOD>=0.8 AND POL>0: 13
+WEATHER DATA FILTERING IS COMPLETED
+VERIFIED DEVICES ['Tricky Brunette Tornado' 'Magic Opaque Fog' 'Dizzy Champagne Sun'
+ 'Brave Veronica Drought' 'Sweet Raspberry Earth'
+ 'Delightful Taupe Troposphere' 'Eager Bole Haze' 'Great Peach Cloud'
+ 'Delightful Nylon Air']
+DATA VERIFICATION IS COMPLETED
+DATA VERIFIED DEVICES COUNT: 9
+LONDON DEVICES FROM DATAFRAME PARTICIPATING IN BET RESOLUTION AFTER FILTERING: 26%
+AVG TEMP: 9.49 Celsius
+```
+
+The average temperature which resolves the weather bet is the output in the end `AVG TEMP: 9.49 Celsius`
 
 ---
 
 ## Next Steps
 
 To build on the success of this experiment, future efforts may include the following:
-
+- **30 Days Resolver**: Run the above script for over 30 days, and then find the average temperature for the last 30 days.
 - **Decentralized Data Pipelines**: Implement a system that continuously ingests and processes weather data using decentralized, distributed pipelines. This approach will ensure data integrity and eliminate central points of failure.
 
 - **Trustless Computation**: Leverage a decentralized computation framework to perform temperature calculations across multiple nodes. This guarantees that the results are produced transparently and can be verified by any party.
@@ -135,6 +187,17 @@ By incorporating these advancements, the experiment can evolve to be more secure
 
 ---
 
-### License
+## License
 
 This project is licensed under the MIT License.
+
+## Technologies
+
+* [Tableland](https://docs.tableland.xyz/)
+* [H3](https://h3geo.org/docs)
+* [OSMnx](https://osmnx.readthedocs.io/en/stable/)
+* [GeoPandas](https://geopandas.org/en/stable/)
+* [Pandas](https://pandas.pydata.org/)
+* [NumPy](https://numpy.org/)
+* [Matplotlib](https://matplotlib.org/)
+
