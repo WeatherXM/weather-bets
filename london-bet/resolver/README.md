@@ -38,7 +38,7 @@ The experiment utilizes **Web3 Storage** and **Enriched Weather Data** to perfor
    - Fetch, filter, and compute data based on a set of predefined criteria.
 
 ### 4. **Result Integration and Bet Resolution**
-   - Integrate the calculated average temperature with the **UMA Oracle**, which will act as the final arbiter for the weather bet.
+   - Integrate the calculated average temperature with an Oracle service compatible with the Betting Platform which will act as the final arbiter for the weather bet.
    - Publish the calculated result to resolve the bet.
 
 ---
@@ -114,7 +114,7 @@ Weather stations employ a secure mechanism to ensure the authenticity and integr
 Here’s how the process works:
 
 #### Packet Signing: 
-Weather stations generate data packets on a daily basis. To conserve resources, certain models are configured to send signed packets periodically, for example, every X packets. The secure element hashes the raw data of these packets and then creates a digital signature using its private key. This private key is securely stored within the secure element, making it inaccessible to unauthorized entities.
+Weather stations generate data packets on a daily basis. To conserve resources, certain models are configured to send signed packets periodically, for example, every X packets. The secure element creates a digital signature using its private key. This private key is securely stored within the secure element, making it inaccessible to anyone including WeatherXM's team.
 
 #### Verification Process: 
 On the receiving side, the authenticity of a packet is verified using the raw data, the corresponding public key of the device, and the generated signature. The public key is associated with the specific device and is used to confirm that the packet was genuinely signed by the station’s private key.
