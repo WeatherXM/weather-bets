@@ -6,8 +6,8 @@
 - [Experiment Scope](#experiment-scope)
 - [Key Terms](#key-terms)
 - [In-Depth Analysis](#in-depth-analysis)
-   -[Data Sources](#data-source-for-london-boundaries)
-   -[Data Verification](#data-verification)
+   - [Data Sources](#data-source-for-london-boundaries)
+   - [Data Verification](#data-verification)
 - [Usage](#usage)
 - [Example](#example)
 - [Next Steps](#next-steps)
@@ -30,7 +30,7 @@ The experiment utilizes **Web3 Storage** and **Enriched Weather Data** to perfor
 ### 2. **Device Filtering**
    - **Active Device List Creation**: Calculate the active devices that should be considered based on:
      - **Quality-of-Data (QoD) >= 0.8**.
-     - **Proof-of-Location (PoL) = 1**.
+     - **Proof-of-Location (PoL) > 0**.
    - The filtered list ensures only the most accurate and trustworthy weather data is used.
 
 ### 3. **Computation and Publication**
