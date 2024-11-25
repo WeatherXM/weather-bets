@@ -71,6 +71,35 @@ def read_file_from_ipfs(cid, gateway="https://ipfs.io/ipfs"):
         return response.content
     else:
         raise Exception(f"FAILED TO FETCH FILE FROM IPFS (CID: {cid}). STATUS: {response.status_code}")
+
+def download_from_basin(cid, save_dir="downloads"):
+    """
+    Download a file from Basin using its CID and save it locally.
+    Args:
+        cid (str): The CID of the file to download.
+        save_dir (str): The directory to save the downloaded file.
+    Returns:
+        str: The local file path where the file is saved.
+    Raises:
+        Exception: If the download fails.
+    """
+    base_url = f"https://basin.tableland.xyz/events/{cid}"
+    os.makedirs(save_dir, exist_ok=True)
+    file_path = os.path.join(save_dir, f"{cid}.parquet") 
+
+    try:
+        print(f"DOWNLOADING CID {cid} FROM {base_url}")
+        response = requests.get(base_url, stream=True)
+        response.raise_for_status()
+        with open(file_path, "wb") as file:
+            for chunk in response.iter_content(chunk_size=8192):
+                file.write(chunk)
+        print(f"FILE DOWNLOADED AND SAVED TO {file_path}")
+        return file_path
+
+    except requests.exceptions.RequestException as e:
+        print(f"Failed to download CID {cid}: {e}")
+        raise Exception(f"Error downloading file from Basin: {e}")
     
 if __name__ == "__main__":
     namespace = os.getenv('BASIN_NAMESPACE')
@@ -91,8 +120,11 @@ if __name__ == "__main__":
         print(f"retrieved {len(cids)} CIDs FROM BASIN.")
         results = []
         for cid in cids:
-            path = download_from_ipfs(cid)
+            path = download_from_basin(cid)
+            print(f"RECEIVED PATH FOR {cid}")
             decision = decide(path, True)
+            # REMOVE FILE AFTER PROCESSING IT AND DOWNLOAD THE NEXT ONE
+            os.remove(path)
             if type(decision) != str:
                 results.append(int(decision))
         print('AVG TEMP: {} Celsius'.format(sum(results) / len(results)))
