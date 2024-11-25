@@ -3,6 +3,7 @@ import pandas as pd
 import location.algo as location
 import weather.algo as weather
 import data.algo as data
+import numpy as np
 
 
 def from_file(path):
@@ -27,7 +28,7 @@ def load_df(path, low_mem):
                 'lat': 'float32',
                 'lon': 'float32',
                 'qod_score': 'float32',
-                'pol_score': 'int8',
+                'pol_score': 'float32',
                 'temperature': 'float32'
             })
             filtered_chunk = filter(chunk)
@@ -51,7 +52,9 @@ def load_df(path, low_mem):
     return df
 
 def filter(chunk):
-    geo_filtered = location.geo_filter(chunk)
+    chunk_pol_cleaned = chunk[np.isfinite(chunk['pol_score'])]
+    chunk_cleaned = chunk_pol_cleaned[np.isfinite(chunk_pol_cleaned['qod_score'])]
+    geo_filtered = location.geo_filter(chunk_cleaned)
     print('GEO VERIFIED DEVICES COUNT: {}'.format(len(geo_filtered['name'].unique())))
     print('GEO LOCATION VERIFICATION IS COMPLETED')
     weather_verified = weather.has_verified_metrics(geo_filtered)
