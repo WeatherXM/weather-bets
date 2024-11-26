@@ -10,6 +10,7 @@ def from_file(path):
     return pq.read_pandas(path, columns=['name', 'model', 'cell_id', 'public_key_PEM', 'ws_packet_b64', 'ws_packet_sig', 'lat', 'lon', 'qod_score', 'pol_score', 'temperature']).to_pandas()
 
 def load_df(path, low_mem):
+    chunk_num = 0
     if low_mem:
         print('LOADING WITH CHUNKS')
         parquet_file = pq.ParquetFile(path)
@@ -32,6 +33,7 @@ def load_df(path, low_mem):
                 'temperature': 'float32'
             })
             filtered_chunk = filter(chunk)
+            chunk_num += 1
             if not filtered_chunk.empty:
                 print(f"Processed chunk {i}: {filtered_chunk.shape[0]} rows")
                 processed_chunks.append(filtered_chunk)
@@ -49,7 +51,8 @@ def load_df(path, low_mem):
         print('LOADING WITHOUT CHUNKS')
         df_loaded = from_file(path)
         df = filter(df_loaded)
-    return df
+        chunk_num = 1
+    return df, chunk_num
 
 def filter(chunk):
     chunk_pol_cleaned = chunk[np.isfinite(chunk['pol_score'])]
@@ -68,7 +71,8 @@ def filter(chunk):
     return data_verified
 
 def decide(path, low_mem):
-    df = load_df(path, low_mem)
+    df,chunk_num = load_df(path, low_mem)
+    print("PROCESSED {} CHUNKS FOR FILE {}".format(chunk_num,path))
     if df.size>0:
         device_mean = df.groupby('name', as_index=False, observed=False)['temperature'].mean()
         london_temp_mean = device_mean.rename(columns={'temperature': 'mean'})['mean'].mean()

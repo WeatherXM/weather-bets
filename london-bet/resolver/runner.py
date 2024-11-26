@@ -88,7 +88,7 @@ def download_from_basin(cid, save_dir="downloads"):
     file_path = os.path.join(save_dir, f"{cid}.parquet") 
 
     try:
-        print(f"DOWNLOADING CID {cid} FROM {base_url}")
+        print(f"DOWNLOADING CID {cid}")
         response = requests.get(base_url, stream=True)
         response.raise_for_status()
         with open(file_path, "wb") as file:
@@ -117,7 +117,7 @@ if __name__ == "__main__":
 
     try:
         cids = fetch_events(namespace, limit, basin_base_url, after=after, before=before)
-        print(f"retrieved {len(cids)} CIDs FROM BASIN.")
+        print(f"RETRIEVED {len(cids)} CIDs FROM BASIN.")
         results = []
         for cid in cids:
             path = download_from_basin(cid)
