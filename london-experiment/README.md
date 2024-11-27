@@ -125,21 +125,38 @@ The use of secure elements and cryptographic signing ensures that the data trans
 ---
 
 ## Usage
+1. Clone the repository.
+
+2. Build the docker image:
+` docker build -t runner .`
+
+3. Spin-up the runner container:
+`docker run -d <image-id>`
+
+4. Take a look at the logs:
+`docker logs -f <container-id>`
+
+## Development
 
 1. Clone the repository.
-2. Ensure all dependencies are installed:
+2. Ensure versions for Python and pip are the following:
+```
+Python 3.12.7 
+pip 24.2
+```
+3. Ensure all dependencies are installed:
 ```
 python3 -m venv venv
 source venv/bin/activate 
 pip install -r requirements.txt
 ```
-3. There are 2 ways to run the program that resolves the bet for only-one **.parquet** file:
+4. There are 2 ways to run the program that resolves the bet for only-one **.parquet** file:
    - With chunks enabled using low memory:
    `python3 main.py -f data.parquet -lm true`
    - Without chunks requiring over 16G RAM and 30G Swap:
    `python3 main.py -f data.parquet`
 
-4. Run the **runner.py** in order to get the result for the time period defined using the env variables *AFTER, BEFORE*:
+5. Run the **runner.py** in order to get the result for the time period defined using the env variables *AFTER, BEFORE*:
    `python3 runner.py`
    The runner is always in low-memory mode in order to get the result with the minimum impact on the host.
 
@@ -170,8 +187,35 @@ The daily average temperature is the output in the end `AVG TEMP: 9.49 Celsius`
 The following is the output when executing the **runner.py** for a period of time:
 
 ```
+GEO LOCATION VERIFICATION IS COMPLETED
+WEATHER VERIFIED DEVICES COUNT WITH QOD>=0.8 AND POL>0: 1
+WEATHER DATA FILTERING IS COMPLETED
+DATA VERIFICATION IS COMPLETED
+DATA VERIFIED DEVICES COUNT: 1
+LONDON DEVICES FROM DATAFRAME PARTICIPATING IN BET RESOLUTION AFTER FILTERING: 100%
+Processed chunk 29: 5035 rows
+GEO VERIFIED DEVICES COUNT: 1
+GEO LOCATION VERIFICATION IS COMPLETED
+WEATHER VERIFIED DEVICES COUNT WITH QOD>=0.8 AND POL>0: 0
+WEATHER DATA FILTERING IS COMPLETED
+DATA VERIFICATION IS COMPLETED
+DATA VERIFIED DEVICES COUNT: 0
+LONDON DEVICES FROM DATAFRAME PARTICIPATING IN BET RESOLUTION AFTER FILTERING: 0%
+CHUNK 30 WAS FILTERED OUT (NO ROWS MEET THE FILTERING CRITERIA)
+GEO VERIFIED DEVICES COUNT: 2
+GEO LOCATION VERIFICATION IS COMPLETED
+WEATHER VERIFIED DEVICES COUNT WITH QOD>=0.8 AND POL>0: 1
+WEATHER DATA FILTERING IS COMPLETED
+DATA VERIFICATION IS COMPLETED
+DATA VERIFIED DEVICES COUNT: 1
+LONDON DEVICES FROM DATAFRAME PARTICIPATING IN BET RESOLUTION AFTER FILTERING: 50%
+Processed chunk 31: 5033 rows
+FINAL DATAFRAME SHAPE: (113961, 11)
+PROCESSED 32 CHUNKS FOR FILE downloads/bafybeihogsuzu5of6lzrafdfzb6ie2jtd2hozvqofvregevknidk2gr7hi.parquet
+AVG TEMP: 8.3 Celsius
 
 ```
+After running the filtering in chunks for all **.parquet** files, the average temperature is calculated for the chosen time using the env variables *AFTER and BEFORE*. The output in the end `AVG TEMP: 9.3 Celsius` indicates the average temperature for this time period.
 
 ---
 
