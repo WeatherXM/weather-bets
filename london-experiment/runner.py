@@ -52,26 +52,6 @@ def download_from_ipfs(cid, save_dir="downloads", gateway="http://localhost:8080
         print(f"ERROR DOWNLOADING FROM IPFS GATEWAY: {str(e)}")
         
 
-def read_file_from_ipfs(cid, gateway="https://ipfs.io/ipfs"):
-    """
-    Read a file from IPFS without downloading it locally.
-    Args:
-        cid (str): The IPFS Content Identifier (CID) of the file.
-        gateway (str): The IPFS gateway URL. Default is taken from environment variables.
-    Returns:
-        file_content: The raw content of the file from IPFS.
-    """
-    
-    url = f"{gateway}/{cid}"
-    response = requests.get(url)
-    ipfs_url = f"{gateway}/{cid}"
-    response = requests.get(ipfs_url, stream=True)
-    
-    if response.status_code == 200:
-        return response.content
-    else:
-        raise Exception(f"FAILED TO FETCH FILE FROM IPFS (CID: {cid}). STATUS: {response.status_code}")
-
 def download_from_basin(cid, save_dir="downloads"):
     """
     Download a file from Basin using its CID and save it locally.
