@@ -127,14 +127,8 @@ The use of secure elements and cryptographic signing ensures that the data trans
 ## Usage
 1. Clone the repository.
 
-2. Build the docker image:
-` docker build -t runner .`
-
-3. Spin-up the runner container:
-`docker run -d <image-id>`
-
-4. Take a look at the logs:
-`docker logs -f <container-id>`
+2. Run the experiment:
+` docker-compose up`
 
 ## Development
 
