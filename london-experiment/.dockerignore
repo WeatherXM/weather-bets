@@ -1,10 +1,9 @@
-data/
-
 # Git
 .git
 .gitignore
 .gitattributes
 
+*.parquet
 
 # CI
 .codeclimate.yml

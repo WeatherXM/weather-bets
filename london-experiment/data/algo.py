@@ -87,5 +87,4 @@ def verify(df):
         except Exception as e:
             verified_mask.append(False)
     filtered_df = df.loc[verified_mask].copy()
-    print('VERIFIED DEVICES {}'.format(filtered_df['name'].unique()))
     return filtered_df
