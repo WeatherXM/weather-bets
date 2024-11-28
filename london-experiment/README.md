@@ -82,7 +82,7 @@ The weather stations' geolocation is mapped into their corresponding H3 hexagons
 
 For this experiment, weather devices will be filtered based on their geolocation in the **London area**. The geolocation filtering is performed using **H3 hexagons at resolution 7**, which divide the Earth into hexagonal cells that allow for efficient spatial indexing. 
 
-<img src="https://github.com/WeatherXM/weather-bets/blob/main/london-bet/resolver/geojson/london_h3_plot.png?raw=true" alt="H3 London Map" width="500" height="500">
+<img src="https://github.com/WeatherXM/weather-bets/blob/main/london-experiment/geojson/london_h3_plot.png?raw=true" alt="H3 London Map" width="500" height="500">
 
 ### Data Source for London Boundaries
 In addition to H3-based filtering, administrative boundaries from the [**UK Open Geography Portal**](https://geoportal.statistics.gov.uk/) are used for validation. This resource provides downloadable datasets, including **GeoJSON files** for the [**London area**](https://geoportal.statistics.gov.uk/datasets/d1dd6053dc7f4b14987e093b30a64435_0/explore?location=51.533145%2C0.201410%2C10.45). These files are based on official data from the Ordnance Survey and Office for National Statistics, and they offer detailed administrative boundaries such as boroughs and wards.
