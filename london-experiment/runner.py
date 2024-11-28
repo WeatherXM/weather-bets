@@ -1,8 +1,9 @@
 import requests
 from decision import decide
 import os
+import sys
 from datetime import datetime, timezone
-
+from tqdm import tqdm
 
 def get_unix_timestamp(date_str, date_format="%Y-%m-%d"):
     dt = datetime.strptime(date_str, date_format)
@@ -99,15 +100,18 @@ if __name__ == "__main__":
         cids = fetch_events(namespace, limit, basin_base_url, after=after, before=before)
         print(f"RETRIEVED {len(cids)} CIDs FROM BASIN.")
         results = []
-        for cid in cids:
+        for cid in tqdm(cids, desc="PROCESSING CIDs", unit="cid", ncols=100, dynamic_ncols=True, file=sys.stdout):
+            print(f"\n PROCESSING CID {cid}")
+            sys.stdout = open(os.devnull, 'w')
             path = download_from_basin(cid)
-            print(f"RECEIVED PATH FOR {cid}")
             decision = decide(path, True)
             # REMOVE FILE AFTER PROCESSING IT AND DOWNLOAD THE NEXT ONE
             os.remove(path)
             if type(decision) != str:
                 results.append(int(decision))
-        print('AVG TEMP: {} Celsius'.format(sum(results) / len(results)))
+            sys.stdout = sys.__stdout__
+            print(f"\n AVERAGE TEMP FOR {cid}: {decision} Celsius")
+        print(f"\n AVG TEMP FOR {after_date} - {before_date} IN LONDON: {sum(results) / len(results)} Celsius")
 
     except Exception as e:
         print(f"An error occurred: {e}")
