@@ -134,6 +134,12 @@ The use of secure elements and cryptographic signing ensures that the data trans
 4. Run the experiment:
 ` docker-compose up`
 
+Example output after executing the experiment with AFTER='2024-10-10' and BEFORE='2024-11-20':
+```
+Processing CIDs: 100%|██████████| 20/20 [2:07:21<00:00, 382.10s/cid]
+runner    | AVG TEMP FOR 2024-10-10 - 2024-11-10 IN LONDON: 12.3 Celsius
+```
+
 ## Development
 
 1. Clone the repository.
