@@ -9,6 +9,7 @@
    - [Data Sources](#data-source-for-london-boundaries)
    - [Data Verification](#data-verification)
 - [Usage](#usage)
+- [Development](#development)
 - [Example](#example)
 - [Next Steps](#next-steps)
 - [License](#license)
@@ -126,8 +127,11 @@ The use of secure elements and cryptographic signing ensures that the data trans
 
 ## Usage
 1. Clone the repository.
-
-2. Run the experiment:
+2. Install Docker and Docker Compose
+   - [Official Docker Documentation](https://docs.docker.com/get-started/)
+   - [Official Docker Compose Documentation](https://docs.docker.com/compose/)
+3. Create a **.env** file with only **AFTER, BEFORE** variables in the following format ***YYYY-MM-DD*** (you may find using the catagory **Proofs** in [**WeatherXM Data Index**](https://index.weatherxm.com/), what are the available time periods in order to choose properly AFTER and BEFORE).
+4. Run the experiment:
 ` docker-compose up`
 
 ## Development
@@ -144,13 +148,16 @@ python3 -m venv venv
 source venv/bin/activate 
 pip install -r requirements.txt
 ```
-4. There are 2 ways to run the program that resolves the bet for only-one **.parquet** file:
-   - With chunks enabled using low memory:
-   `python3 main.py -f data.parquet -lm true`
-   - Without chunks requiring over 16G RAM and 30G Swap:
-   `python3 main.py -f data.parquet`
+4. Create a **.env** file with all ENVIRONMENTAL VARIABLES defined in **.env.template**
+4. There are 2 ways to run the program using one **.parquet** file to calculate a daily average temperature for London:
+   - First download the **paruet** file of your choosing from [**WeatherXM Data Index**](https://index.weatherxm.com/).
+   - Then, you may run the **main** in 2 ways:
+      [--] With chunks enabled using low memory:
+      `python3 main.py -f data.parquet -lm true`
+      [--] Without chunks requiring over 16G RAM and 30G Swap:
+      `python3 main.py -f data.parquet`
 
-5. Run the **runner.py** in order to get the result for the time period defined using the env variables *AFTER, BEFORE*:
+5. Run the **runner.py** in order to get the result for the time period defined in env variables **AFTER, BEFORE**:
    `python3 runner.py`
    The runner is always in low-memory mode in order to get the result with the minimum impact on the host.
 
