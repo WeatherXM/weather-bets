@@ -108,9 +108,9 @@ if __name__ == "__main__":
             # REMOVE FILE AFTER PROCESSING IT AND DOWNLOAD THE NEXT ONE
             os.remove(path)
             if type(decision) != str:
-                results.append(int(decision))
+                results.append(float(decision))
             sys.stdout = sys.__stdout__
-            print(f"\n AVERAGE TEMP FOR {cid}: {decision} Celsius")
+            print(f"AVERAGE TEMP FOR {cid}: {round(float(decision),2)} Celsius")
         print(f"\n AVG TEMP FOR {after_date} - {before_date} IN LONDON: {sum(results) / len(results)} Celsius")
 
     except Exception as e:
