@@ -1,4 +1,4 @@
-# PoC Oracle Service for London Monthly Average Temperature
+# PoC Weather Resolver Service for London Monthly Average Temperature
 
 ##### Table of Contents  
 - [Overview](#overview)
@@ -17,7 +17,7 @@
 
 ## Overview
 
-This is a PoC for the first weather oracle service leveraging data from the [**WeatherXM Data Index**](https://index.weatherxm.com/). The experiment involves calculating the average temperature for a major city (in this case, London) over a 30-day period. This result can potentially be used to resolve a weather bet, where users can predict whether the actual average temperature falls within a certain range or not. This experiment serves as a prototype.
+This is a PoC for the first weather resolver service leveraging data from the [**WeatherXM Data Index**](https://index.weatherxm.com/). The experiment involves calculating the average temperature for a major city (in this case, London) over a 30-day period. This result can potentially be used to resolve a weather bet, where users can predict whether the actual average temperature falls within a certain range or not. This experiment serves as a prototype.
 
 ---
 
