@@ -4,4 +4,4 @@ services:
     build: 
       context: .
       dockerfile: ./Dockerfile
-    container_name: runner
+    container_name: london-runner
